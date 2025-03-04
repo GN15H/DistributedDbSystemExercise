@@ -4,27 +4,5 @@
     "pc2_last_update": "2025-03-04T13:44:52.995779",
     "backup_last_update": "2025-03-04T13:45:32.196470",
     "instructions": [
-        {
-            "sender": "server",
-            "operation": "create",
-            "person_data": {
-                "name": "solo",
-                "last_name": "pal",
-                "email": "backap",
-                "phone": "1"
-            },
-            "time": "2025-03-04T13:42:43.642798"
-        },
-        {
-            "sender": "server",
-            "operation": "create",
-            "person_data": {
-                "name": "solo",
-                "last_name": "va",
-                "email": "palunoydos",
-                "phone": "sinbackap"
-            },
-            "time": "2025-03-04T13:44:52.995779"
-        }
     ]
 }
