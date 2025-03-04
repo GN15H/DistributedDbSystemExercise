@@ -1,0 +1,19 @@
+{
+    "last_update": "2025-03-04T08:14:39.641927",
+    "pc1_last_update": "2025-03-04T08:14:39.641927",
+    "pc2_last_update": "2025-03-04T08:12:43.449783",
+    "backup_last_update": "",
+    "instructions": [
+        {
+            "sender": "client",
+            "operation": "create",
+            "person_data": {
+                "name": "nombrea",
+                "last_name": "apellido",
+                "email": "email",
+                "phone": "tele"
+            },
+            "time": "2025-03-03T22:13:47.276758"
+        }
+    ]
+}
