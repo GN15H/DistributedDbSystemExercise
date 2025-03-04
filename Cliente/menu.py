@@ -29,6 +29,9 @@ def handle_response(data, response):
         return None
     data_body = pickle.loads(response)
     if data.operation == "create":
+        if isinstance(data_body, str):
+            print("Servicio no disponible en este momento")
+            return
         print("Registro exitoso\n" if data_body else "Fallo al crear registro\n")
         print("\n")
     if data.operation == "fetch":

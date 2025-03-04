@@ -41,6 +41,17 @@ class Log_H:
             with open("log.json", "w") as file:
                 json.dump(data, file, indent=4)
     
+    def save_time_backup(self, response, request_arr):
+        for request in request_arr:
+            if request.operation == "fetch":
+                continue
+            if response == 0:
+                continue
+            data = self.read_json()
+            data["backup_last_update"] = self.time
+            with open("log.json", "w") as file:
+                json.dump(data, file, indent=4)
+                
     def read_json(self):
         with open("log.json", "r") as file:
             data = json.load(file)
@@ -79,6 +90,9 @@ class Log_H:
         data = self.get_update_times()
         self.get_undone_requests(data[0],request_arr)
     def get_pc2_undone_requests(self, request_arr):
+        data = self.get_update_times()
+        self.get_undone_requests(data[1],request_arr)
+    def get_backup_undone_requests(self, request_arr):
         data = self.get_update_times()
         self.get_undone_requests(data[1],request_arr)
 

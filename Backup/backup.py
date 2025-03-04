@@ -2,6 +2,7 @@ import socket
 from db_handler import Db_Handler
 from connection_backup import Connection
 import pickle
+import log_handler
 
 def write_to_file(conn, addr):
     while True:
@@ -26,33 +27,40 @@ def request_handler(db_handler,parsed_data):
     print("Respuesta",res)
     return res
 
-def handle_response(conn, parsed_data, response):
-    if parsed_data[0] == "create":
+def handle_response(conn, parsed_data, response, log):
+    if parsed_data[0].operation == "create":
         res = 0
         for item in response:
             res = res or item
-            conn.sendall(pickle.dumps(res))
-    elif parsed_data[0] == "fetch":
+        conn.sendall(pickle.dumps(res))
+    elif parsed_data[0].operation == "fetch":
         #logica de selección
+        max_index, max_timestamp = log.get_most_recent_updated()
         conn.sendall(pickle.dumps(response[0]))
 
-def backup_handler(conn,backup,db_handler,data):
+def backup_handler(conn,backup,db_handler,data, log):
     parsed_data = pickle.loads(data)
     if not isinstance(parsed_data, list):
         parsed_data = [parsed_data]
+    if len(parsed_data) == 1 and parsed_data[0].sender == "client" and parsed_data[0].operation == "create":
+        conn.sendall(pickle.dumps("Servicio no disponible en este momento"))
+        return None
     res_backup = request_handler(db_handler, parsed_data)
     response = [res_backup]
     if len(parsed_data) == 1 and parsed_data[0].sender == "client":
-        backup.send_data(backup.client, data)
+        if parsed_data[0].operation == "create":
+            conn.sendall(pickle.dumps("Servicio no disponible en este momento"))
+            return None
+        backup.send_data(backup.client, pickle.dumps(parsed_data))
         res1 = backup.receive_data(backup.client, DECODE=True)
         response.append(res1)
         print("respuesta del pc1", res1)
 
-        backup.send_data(backup.client2, data)
+        backup.send_data(backup.client2, pickle.dumps(parsed_data))
         res2 = backup.receive_data(backup.client2, DECODE=True)
         response.append(res2)
         print("respuesta del pc2", res2)
-        handle_response(conn,parsed_data,response)
+        handle_response(conn,parsed_data,response, log)
     else:
         backup.send_data(conn, pickle.dumps(res_backup))
 
@@ -60,6 +68,7 @@ def backup_handler(conn,backup,db_handler,data):
         
 backup = Connection()
 db = Db_Handler()
+log = log_handler.Log_H()
 while True:
     conn, addr = backup.accept()
     print('Connected by', addr, conn.getsockname()[1])
@@ -68,7 +77,7 @@ while True:
 
         if not data:
             break
-        backup_handler(conn,backup,db,data)
+        backup_handler(conn,backup,db,data, log)
 
 
 
