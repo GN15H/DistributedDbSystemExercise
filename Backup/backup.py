@@ -17,11 +17,12 @@ def write_to_file(conn, addr):
 
 def request_handler(db_handler,parsed_data):
     print(parsed_data)
-    res = None
-    if parsed_data.operation == "create":
-        res = db_handler.create_user(parsed_data.person_data.name, parsed_data.person_data.last_name, parsed_data.person_data.email, parsed_data.person_data.phone)
-    elif parsed_data.operation == "fetch":
-        res = db_handler.fetch_users()
+    res = True
+    for request in parsed_data:
+        if request.operation == "create":
+            res = res and db_handler.create_user(request.person_data.name, request.person_data.last_name, request.person_data.email, request.person_data.phone)
+        elif request.operation == "fetch":
+            res = res and db_handler.fetch_users()
     print("Respuesta",res)
     return res
 
@@ -35,13 +36,13 @@ def handle_response(conn, parsed_data, response):
         #logica de selección
         conn.sendall(pickle.dumps(response[0]))
 
-
-
 def backup_handler(conn,backup,db_handler,data):
     parsed_data = pickle.loads(data)
+    if not isinstance(parsed_data, list):
+        parsed_data = [parsed_data]
     res_backup = request_handler(db_handler, parsed_data)
     response = [res_backup]
-    if parsed_data.sender == "client":
+    if len(parsed_data) == 1 and parsed_data[0].sender == "client":
         backup.send_data(backup.client, data)
         res1 = backup.receive_data(backup.client, DECODE=True)
         response.append(res1)

@@ -10,7 +10,7 @@ def handle_response(conn, data, response, log):
         res = 0
         for item in response:
             res = res or item
-            conn.sendall(pickle.dumps(res))
+        conn.sendall(pickle.dumps(res))
     elif parsed_data.operation == "fetch":
         #logica de selección
         max_index, max_timestamp = log.get_most_recent_updated()
