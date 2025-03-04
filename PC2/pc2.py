@@ -32,16 +32,18 @@ def receive_data(conn, DECODE=False):
 
 def request_handler(conn, db_handler, log):
     while True:
-        data = conn.recv(1024)
-        print("Received",pickle.loads(data).operation)
+        data = receive_data(conn)
+        # data = conn.recv(1024)
+        print("Received",pickle.loads(data)[0].operation)
         parsed_data = pickle.loads(data)
-        log.save_time(parsed_data.time)
         print(parsed_data)
-        res = None
-        if parsed_data.operation == "create":
-            res = db_handler.create_user(parsed_data.person_data.name, parsed_data.person_data.last_name, parsed_data.person_data.email, parsed_data.person_data.phone)
-        elif parsed_data.operation == "fetch":
-            res = db_handler.fetch_users()
+        res = True
+        for request in parsed_data:
+            print("tamo haciendo", request.operation, request.person_data)
+            if request.operation == "create":
+                res = res and db_handler.create_user(request.person_data.name, request.person_data.last_name, request.person_data.email, request.person_data.phone)
+            elif request.operation == "fetch":
+                res = res and db_handler.fetch_users()
         print("Respuesta",res)
         conn.sendall(pickle.dumps(res))
 

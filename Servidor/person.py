@@ -12,3 +12,6 @@ class Person:
             "email": self.email,
             "phone": self.phone
         }
+    
+    def from_dict(data):
+        return Person(data["name"], data["last_name"], data["email"], data["phone"])

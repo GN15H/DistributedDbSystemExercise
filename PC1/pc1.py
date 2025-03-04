@@ -37,12 +37,11 @@ def request_handler(conn, db_handler, log):
         # data = conn.recv(1024)
         print("Received",pickle.loads(data)[0].operation)
         parsed_data = pickle.loads(data)
-        log.save_time(parsed_data.time)
         print(parsed_data)
-        res = None
+        res = True
         for request in parsed_data:
             if request.operation == "create":
-                res = res and db_handler.create_user(parsed_data.person_data.name, parsed_data.person_data.last_name, parsed_data.person_data.email, parsed_data.person_data.phone)
+                res = res and db_handler.create_user(request.person_data.name, request.person_data.last_name, request.person_data.email, request.person_data.phone)
             elif request.operation == "fetch":
                 res = res and db_handler.fetch_users()
         print("Respuesta",res)
