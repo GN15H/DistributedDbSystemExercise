@@ -1,7 +1,32 @@
 {
-    "last_update": "2025-03-08T13:58:44.691072",
-    "pc1_last_update": "2025-03-08T13:58:34.512276",
-    "pc2_last_update": "2025-03-08T13:58:34.512276",
-    "backup_last_update": "2025-03-07T22:31:09.094028",
-    "instructions": []
+    "last_update": "2025-03-08T15:54:39.601517",
+    "pc1_last_update": "2025-03-08T15:54:36.569794",
+    "pc2_last_update": "2025-03-08T15:54:12.077249",
+    "backup_last_update": "2025-03-08T15:53:47.595541",
+    "instructions": [
+        {
+            "sender": "server",
+            "operation": "create",
+            "person_data": {
+                "name": "se ",
+                "last_name": "fue",
+                "email": "el",
+                "phone": "pc1"
+            },
+            "time": "2025-03-08T15:53:47.604540",
+            "log": null
+        },
+        {
+            "sender": "server",
+            "operation": "create",
+            "person_data": {
+                "name": "mas",
+                "last_name": "encima",
+                "email": "se",
+                "phone": "fueelserver"
+            },
+            "time": "2025-03-08T15:54:12.077249",
+            "log": null
+        }
+    ]
 }

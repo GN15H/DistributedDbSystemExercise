@@ -1,7 +1,20 @@
 {
-    "last_update": "2025-03-07T20:15:58.555649",
-    "pc1_last_update": "2025-03-07T20:15:30.314871",
-    "pc2_last_update": "2025-03-07T20:15:30.314871",
+    "last_update": "2025-03-08T15:11:57.273093",
+    "pc1_last_update": "2025-03-08T15:11:57.273093",
+    "pc2_last_update": "2025-03-08T15:10:35.258247",
+    "backup_last_update": "2025-03-08T15:10:35.258247",
     "instructions": [
+        {
+            "sender": "server",
+            "operation": "create",
+            "person_data": {
+                "name": "otra",
+                "last_name": "cfs",
+                "email": "asd",
+                "phone": "jlj"
+            },
+            "time": "2025-03-08T15:11:57.273093",
+            "log": null
+        }
     ]
 }

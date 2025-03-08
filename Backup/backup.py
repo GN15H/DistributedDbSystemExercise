@@ -45,11 +45,13 @@ def backup_handler(conn,backup,db_handler,data, log):
     if not isinstance(parsed_data, list):
         parsed_data = [parsed_data]
 
-    if len(parsed_data) == 1 and parsed_data[0].sender == "client":
+    if len(parsed_data) == 1 and parsed_data[0].sender == "client" and parsed_data[0].operation != "update_log":
         return server_func.server_func(log=log, server=backup, conn=conn, data=data, db_handler=db_handler, parsed_data=parsed_data)
+    elif len(parsed_data) == 1 and parsed_data[0].sender == "server" and parsed_data[0].operation == "update_log":
+        conn.sendall(pickle.dumps(log.read_json()))
     else:
         log.update_json(parsed_data[0].log)
-        return storage_func.request_handler_server(conn=conn, db_handler=db_handler, parsed_data=parsed_data)
+        return storage_func.request_handler_server(conn=conn, db_handler=db_handler, parsed_data=parsed_data, log=log)
     # res_backup = request_handler(db_handler, parsed_data)
     # response = [res_backup]
     # if len(parsed_data) == 1 and parsed_data[0].sender == "client":

@@ -64,6 +64,12 @@ class Log_H:
             with open("log.json", "w") as file:
                 json.dump(data, file, indent=4)
                 
+    def save_time_backup_2(self, response, request_arr):
+        data = self.read_json()
+        data["backup_last_update"] = datetime.now().isoformat()
+        with open("log.json", "w") as file:
+            json.dump(data, file, indent=4)
+                
     def read_json(self):
         with open("log.json", "r") as file:
             data = json.load(file)
@@ -82,6 +88,18 @@ class Log_H:
                 return item[0], 0
         return 0, 0
         # return max(enumerate(data), key=lambda x: x[1])
+    
+    def handle_backup_log(self, backup_log):
+        if backup_log == 0:
+            return None
+        current_log = self.read_json()
+        if datetime.fromisoformat(current_log["last_update"]) >= datetime.fromisoformat(backup_log["last_update"]):
+            return None
+        current_log["pc1_last_update"] = backup_log["pc1_last_update"]
+        current_log["pc2_last_update"] = backup_log["pc2_last_update"]
+        current_log["backup_last_update"] = backup_log["last_update"]
+        current_log["instructions"].extend(backup_log["instructions"])
+        self.update_json(current_log)
 
     def save_logs(self, request, response):
         if request.operation == "fetch":

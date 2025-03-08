@@ -28,6 +28,11 @@ while True:
 
         if not data:
             break
+        
+        server.send_data(server.backup, pickle.dumps([Request_M("server","update_log", None, None, None)]))
+        backup_log = server.receive_data(server.backup, DECODE=True)
+        log.handle_backup_log(backup_log)
+        log.save_time_backup_2(1,[Request_M("server","create",None,None,None)])
 
         log.save_time()
         data_parsed = pickle.loads(data)
@@ -62,7 +67,7 @@ while True:
 
         response = [res, res2, res_backup]
 
-        log.save_logs(data_parsed, [res_backup])
+        log.save_logs(data_parsed,response)
 
         handle_response(conn,data,response, log)
 
