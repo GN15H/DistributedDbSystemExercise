@@ -12,11 +12,15 @@ class Log_H:
     def _update_time(self):
         self.time = datetime.now().isoformat()
 
+    def update_json(self, json_data):
+        with open("log_backup.json", "w") as file:
+            json.dump(json_data, file, indent=4)
+
     def save_time(self):
         data = self.read_json()
         self._update_time()
         data["last_update"] = self.time
-        with open("log.json", "w") as file:
+        with open("log_backup.json", "w") as file:
             json.dump(data, file, indent=4)
 
     def save_time_pc1(self, response, request_arr):
@@ -27,7 +31,7 @@ class Log_H:
                 return None
             data = self.read_json()
             data["pc1_last_update"] = self.time
-            with open("log.json", "w") as file:
+            with open("log_backup.json", "w") as file:
                 json.dump(data, file, indent=4)
 
     def save_time_pc2(self, response, request_arr):
@@ -38,22 +42,11 @@ class Log_H:
                 continue
             data = self.read_json()
             data["pc2_last_update"] = self.time
-            with open("log.json", "w") as file:
+            with open("log_backup.json", "w") as file:
                 json.dump(data, file, indent=4)
     
-    def save_time_backup(self, response, request_arr):
-        for request in request_arr:
-            if request.operation == "fetch":
-                continue
-            if response == 0:
-                continue
-            data = self.read_json()
-            data["backup_last_update"] = self.time
-            with open("log.json", "w") as file:
-                json.dump(data, file, indent=4)
-
     def read_json(self):
-        with open("log.json", "r") as file:
+        with open("log_backup.json", "r") as file:
             data = json.load(file)
             return data
 
@@ -74,10 +67,11 @@ class Log_H:
         if flag:
             data = self.read_json()
             data["instructions"] = []
+            self.update_json(data)
             return None
         data = self.read_json()
         data["instructions"].append(request.to_dict())
-        with open("log.json", "w") as file:
+        with open("log_backup.json", "w") as file:
             json.dump(data, file, indent=4)
 
     def get_undone_requests(self, time, requests_arr):

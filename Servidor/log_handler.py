@@ -12,6 +12,18 @@ class Log_H:
     def _update_time(self):
         self.time = datetime.now().isoformat()
 
+    def _avoid_duplicates(self):
+        data = self.read_json()
+        for instruction in data["instructions"]:
+            if instruction["time"] == data["last_update"]:
+                return True
+        return False
+        #si hay alguna con tiempo igual al last updated assert
+
+    def update_json(self, json_data):
+        with open("log.json", "w") as file:
+            json.dump(json_data, file, indent=4)
+
     def save_time(self):
         data = self.read_json()
         self._update_time()
@@ -61,9 +73,15 @@ class Log_H:
         data = self.read_json()
         return (datetime.fromisoformat(data["pc1_last_update"]), datetime.fromisoformat(data["pc2_last_update"]), datetime.fromisoformat(data["backup_last_update"]))
 
-    def get_most_recent_updated(self):
+    def get_most_recent_updated(self, response):
         data = self.get_update_times()
-        return max(enumerate(data), key=lambda x: x[1])
+        dates_with_index = sorted(enumerate(data),key= lambda x: x[1],reverse=True)
+        
+        for item in dates_with_index:
+            if response[item[0]] != 0:
+                return item[0], 0
+        return 0, 0
+        # return max(enumerate(data), key=lambda x: x[1])
 
     def save_logs(self, request, response):
         if request.operation == "fetch":
@@ -74,6 +92,9 @@ class Log_H:
         if flag:
             data = self.read_json()
             data["instructions"] = []
+            self.update_json(data)
+            return None
+        if self._avoid_duplicates():
             return None
         data = self.read_json()
         data["instructions"].append(request.to_dict())

@@ -13,7 +13,7 @@ def handle_response(conn, data, response, log):
         conn.sendall(pickle.dumps(res))
     elif parsed_data.operation == "fetch":
         #logica de selección
-        max_index, max_timestamp = log.get_most_recent_updated()
+        max_index, max_timestamp = log.get_most_recent_updated(response)
         conn.sendall(pickle.dumps(response[max_index]))
 
 
@@ -49,6 +49,10 @@ while True:
         print("Respuesta del pc2",res2)
         log.save_time_pc2(res2, client2_req)
 
+        log.save_logs(data_parsed, [res, res2])
+
+        data_parsed.log = log.read_json()
+
         backup_req = [data_parsed]
         log.get_backup_undone_requests(backup_req)
         server.send_data(server.backup, pickle.dumps(backup_req)) #Request for backup
@@ -58,7 +62,7 @@ while True:
 
         response = [res, res2, res_backup]
 
-        log.save_logs(data_parsed, response)
+        log.save_logs(data_parsed, [res_backup])
 
         handle_response(conn,data,response, log)
 

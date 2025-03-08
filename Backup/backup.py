@@ -3,6 +3,8 @@ from db_handler import Db_Handler
 from connection_backup import Connection
 import pickle
 import log_handler
+import server_func
+import storage_func
 
 def write_to_file(conn, addr):
     while True:
@@ -42,27 +44,30 @@ def backup_handler(conn,backup,db_handler,data, log):
     parsed_data = pickle.loads(data)
     if not isinstance(parsed_data, list):
         parsed_data = [parsed_data]
-    if len(parsed_data) == 1 and parsed_data[0].sender == "client" and parsed_data[0].operation == "create":
-        conn.sendall(pickle.dumps("Servicio no disponible en este momento"))
-        return None
-    res_backup = request_handler(db_handler, parsed_data)
-    response = [res_backup]
-    if len(parsed_data) == 1 and parsed_data[0].sender == "client":
-        if parsed_data[0].operation == "create":
-            conn.sendall(pickle.dumps("Servicio no disponible en este momento"))
-            return None
-        backup.send_data(backup.client, pickle.dumps(parsed_data))
-        res1 = backup.receive_data(backup.client, DECODE=True)
-        response.append(res1)
-        print("respuesta del pc1", res1)
 
-        backup.send_data(backup.client2, pickle.dumps(parsed_data))
-        res2 = backup.receive_data(backup.client2, DECODE=True)
-        response.append(res2)
-        print("respuesta del pc2", res2)
-        handle_response(conn,parsed_data,response, log)
+    if len(parsed_data) == 1 and parsed_data[0].sender == "client":
+        return server_func.server_func(log=log, server=backup, conn=conn, data=data, db_handler=db_handler, parsed_data=parsed_data)
     else:
-        backup.send_data(conn, pickle.dumps(res_backup))
+        log.update_json(parsed_data[0].log)
+        return storage_func.request_handler_server(conn=conn, db_handler=db_handler, parsed_data=parsed_data)
+    # res_backup = request_handler(db_handler, parsed_data)
+    # response = [res_backup]
+    # if len(parsed_data) == 1 and parsed_data[0].sender == "client":
+    #     if parsed_data[0].operation == "create":
+    #         conn.sendall(pickle.dumps("Servicio no disponible en este momento"))
+    #         return None
+    #     backup.send_data(backup.client, pickle.dumps(parsed_data))
+    #     res1 = backup.receive_data(backup.client, DECODE=True)
+    #     response.append(res1)
+    #     print("respuesta del pc1", res1)
+
+    #     backup.send_data(backup.client2, pickle.dumps(parsed_data))
+    #     res2 = backup.receive_data(backup.client2, DECODE=True)
+    #     response.append(res2)
+    #     print("respuesta del pc2", res2)
+    #     handle_response(conn,parsed_data,response, log)
+    # else:
+    #     backup.send_data(conn, pickle.dumps(res_backup))
 
 
         
@@ -78,12 +83,5 @@ while True:
         if not data:
             break
         backup_handler(conn,backup,db,data, log)
-
-
-
-
-client.close()
-client2.close()
-conn.close()
 
 

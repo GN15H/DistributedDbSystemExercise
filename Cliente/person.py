@@ -4,3 +4,6 @@ class Person:
         self.last_name = last_name
         self.email = email
         self.phone = phone
+
+    def from_dict(data):
+        return Person(data["name"], data["last_name"], data["email"], data["phone"])
